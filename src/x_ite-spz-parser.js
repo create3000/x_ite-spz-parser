@@ -90,7 +90,8 @@ class SPZParser extends X3D .X3DParser
       result .rotations = array .subarray (currentOffset, currentOffset += result .numRotations);
       result .sh        = array .subarray (currentOffset, currentOffset += result .numSh);
 
-      // Verify we read the expected amount of data
+      // Verify we read the expected amount of data.
+
       if (currentOffset !== this .buffer .byteLength)
          throw new Error ("x_ite-spz-parser: incorrect buffer size.");
 
