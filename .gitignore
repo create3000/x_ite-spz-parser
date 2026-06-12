@@ -1,7 +1,6 @@
 /node_modules/
-/src/tests/
 /package-lock.json
-/docs/ssl
+/build-spz/
 
 **/.DS_Store
 

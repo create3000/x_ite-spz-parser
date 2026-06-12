@@ -10,7 +10,8 @@
   "scripts": {
     "dist": "cp ./src/x_ite-spz-parser.js ./dist/x_ite-spz-parser.js",
     "prerelease": "npm run dist",
-    "release": "node build/release.js"
+    "release": "node build/release.js",
+    "spz": "node build/spz.js"
   },
   "repository": {
     "type": "git",
