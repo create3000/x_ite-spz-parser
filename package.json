@@ -1,9 +1,9 @@
 {
-  "name": "x_ite-off-parser",
-  "version": "1.0.8",
-  "description": "OFF 3D File Format Parser for X_ITE",
-  "main": "dist/x_ite-off-parser.js",
-  "module": "dist/x_ite-off-parser.js",
+  "name": "x_ite-spz-parser",
+  "version": "1.0.0",
+  "description": "3DGS SPZ File Format Parser for X_ITE",
+  "main": "dist/x_ite-spz-parser.js",
+  "module": "dist/x_ite-spz-parser.js",
   "files": [
     "dist/*"
   ],
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/create3000/x_ite-off-parser.git"
+    "url": "git+https://github.com/create3000/x_ite-spz-parser.git"
   },
   "keywords": [
     "3D",
@@ -28,9 +28,9 @@
   "author": "Holger Seelig <holger.seelig@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/create3000/x_ite-off-parser/issues"
+    "url": "https://github.com/create3000/x_ite-spz-parser/issues"
   },
-  "homepage": "https://github.com/create3000/x_ite-off-parser#readme",
+  "homepage": "https://github.com/create3000/x_ite-spz-parser#readme",
   "funding": {
     "type": "patreon",
     "url": "https://patreon.com/X_ITE"
