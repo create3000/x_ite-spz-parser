@@ -69,12 +69,23 @@ class SPZParser extends X3D .X3DParser
       await this .getBrowser () .loadComponents (scene);
 
       const
+         transform      = scene .createNode ("Transform"),
          gaussianSplats = scene .createNode ("GaussianSplats"),
          splats         = this .parseSplats ();
 
       console .log (splats);
 
-      scene .rootNodes .push (gaussianSplats);
+      gaussianSplats .positions    = splats .positions;
+      gaussianSplats .orientations = splats .orientations;
+      gaussianSplats .scales       = splats .scales;
+      gaussianSplats .opacities    = splats .opacities;
+
+      gaussianSplats .sphericalHarmonicsDegree0Coef0 = splats .colors;
+
+      transform .rotation = new X3D .Rotation4 (1, 0, 0, Math .PI);
+
+      transform .children .push (gaussianSplats);
+      scene .rootNodes .push (transform);
 
       return scene;
    }
