@@ -8,7 +8,7 @@
     "dist/*"
   ],
   "scripts": {
-    "dist": "terser -c -m -p bare_returns -o ./dist/x_ite-spz-parser.js ./src/x_ite-spz-parser.js",
+    "dist": "terser -c -m -o ./dist/x_ite-spz-parser.js ./src/x_ite-spz-parser.js",
     "release": "node build/release.js"
   },
   "repository": {
