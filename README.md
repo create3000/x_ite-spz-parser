@@ -5,7 +5,7 @@
 [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/x_ite-spz-parser/badge?style=rounded)](https://create3000.github.io/jsdelivr-download-stats/?username=create3000&repository=x_ite)
 [![npm Downloads](https://img.shields.io/npm/dm/x_ite-spz-parser)](https://npmtrends.com/x_ite-spz-parser)
 
-OFF 3D File Format Parser for [X_ITE](https://create3000.github.io/x_ite/)
+3DGS SPZ File Format Parser for [X_ITE](https://create3000.github.io/x_ite/)
 
 ## Usage
 
