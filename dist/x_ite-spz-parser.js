@@ -1,1 +1,348 @@
-const X3D=window[Symbol.for("X_ITE.X3D")],ANTIALIASED_FLAG=1,COLOR_SCALE=.15;class SPZParser extends X3D.X3DParser{constructor(e){super(e),this.offset=0}getEncoding(){return"ARRAY_BUFFER"}setInput(e){this.buffer=e,this.dataView=new DataView(e),this.header=this.parseHeader()}isValid(){const{magic:e,version:s,shDegree:t}=this.header;return 1347635022===e&&(!(s<1||s>2)&&!(t>3))}parseIntoScene(e,s){this.spz().then(e).catch(s)}async spz(){const e=this.getBrowser(),s=this.getScene();s.setEncoding("SPZ"),s.setProfile(e.getProfile("Interchange")),s.addComponent(e.getComponent("X_ITE")),await this.getBrowser().loadComponents(s);const t=s.createNode("Transform"),r=s.createNode("GaussianSplats"),o=this.parseSplats();r.positions=o.positions,r.orientations=o.orientations,r.scales=o.scales,r.opacities=o.opacities,r.sphericalHarmonicsDegree0Coef0=o.colors;const i=this.header.shDegree;for(let e=0;e<i;++e){const s=this.coefsForDegree(e);for(let t=0;t<s;++t)r[`sphericalHarmonicsDegree${e+1}Coef${t}`]=o.shs[e][t]}return t.rotation=new X3D.Rotation4(1,0,0,Math.PI),t.children.push(r),s.rootNodes.push(t),s}parseHeader(){const{dataView:e}=this,s={magic:e.getUint32(this.offset,!0),version:e.getUint32(this.offset+=4,!0),numPoints:e.getUint32(this.offset+=4,!0),shDegree:e.getUint8(this.offset+=4),fractionalBits:e.getUint8(this.offset+=1),flags:e.getUint8(this.offset+=1),reserved:e.getUint8(this.offset+=1)};return this.offset+=1,s}parseSplats(){const{version:e,numPoints:s,shDegree:t,fractionalBits:r,flags:o}=this.header,i={numPoints:s,shDegree:t,fractionalBits:r,antialiased:!!(1&o),numPositions:3*s*(1===e?2:3),numRotations:3*s,numScales:3*s,numOpacities:s,numColors:3*s,numShs:s*this.dimForDegree(t)*3},n=new Uint8Array(this.buffer);let a=this.offset;if(i.positions=n.subarray(a,a+=i.numPositions),i.opacities=n.subarray(a,a+=i.numOpacities),i.colors=n.subarray(a,a+=i.numColors),i.scales=n.subarray(a,a+=i.numScales),i.rotations=n.subarray(a,a+=i.numRotations),i.shs=n.subarray(a,a+=i.numShs),a!==this.buffer.byteLength)throw new Error("x_ite-spz-parser: incorrect buffer size.");return this.unpackSplats(i)}unpackSplats(e){const{numPoints:s,positions:t,rotations:r,scales:o,colors:i,shs:n,shDegree:a}=e,h=this.dimForDegree(a),c=t.length===3*s*2;if(!this.checkSizes2(e,s,h,c))throw new Error("x_ite-spz-parser: incorrect array sizes.");const u=[],f=[],l=[],p=[],g=[],m=Array.from({length:a},(e,s)=>Array.from({length:this.coefsForDegree(s)}).map(()=>[]));let d;c&&(d=new Uint16Array(t.buffer,t.byteOffset,3*s));const D=1/(1<<e.fractionalBits),S=this.dimForDegree(a);for(let h=0;h<s;++h){if(c)for(let e=0;e<3;++e)u.push(this.halfToFloat(d[3*h+e]));else for(let e=0;e<3;++e){const s=9*h+3*e;let r=t[s];r|=t[s+1]<<8,r|=t[s+2]<<16,r|=8388608&r?4278190080:0,u.push(r*D)}for(let e=0;e<3;++e)l.push(Math.exp(o[3*h+e]/16-10));const s=r.subarray(3*h,3*h+3),w=[s[0]/127.5-1,s[1]/127.5-1,s[2]/127.5-1];f.push(w[0]),f.push(w[1]),f.push(w[2]);const y=Math.hypot(w[0],w[1],w[2]);f.push(Math.sqrt(Math.max(0,1-y))),p.push(e.opacities[h]/255);for(let e=0;e<3;++e)g.push((i[3*h+e]/255-.5)/.15);for(let e=0,s=0;e<a;++e){const t=this.coefsForDegree(e);for(let r=0;r<t;++r)for(let t=0;t<3;++t,++s)m[e][r].push(this.unquantizeSH(n[S*h*3+s]))}}return{positions:u,orientations:f,scales:l,opacities:p,colors:g,shs:m}}checkSizes2(e,s,t,r){return e.positions.length===3*s*(r?2:3)&&(e.scales.length===3*s&&(e.rotations.length===3*s&&(e.opacities.length===s&&(e.colors.length===3*s&&e.shs.length===s*t*3))))}halfToFloat(e){const s=e>>10&31,t=1023&e,r=1===(e>>15&1)?-1:1;return 0===s?r*Math.pow(2,-14)*t/1024:31===s?0!==t?NaN:r*(1/0):r*Math.pow(2,s-15)*(1+t/1024)}unquantizeSH(e){return(e-128)/128}dimForDegree(e){switch(e){case 0:return 0;case 1:return 3;case 2:return 8;case 3:return 15}}coefsForDegree(e){switch(e){case 0:return 3;case 1:return 5;case 2:return 7}}}X3D.GoldenGate.addParsers(SPZParser);
+const X3D = window [Symbol .for ("X_ITE.X3D")];
+
+const
+   ANTIALIASED_FLAG = 1,
+   COLOR_SCALE      = 0.15;
+
+/*
+ * Parser
+ */
+
+// https://github.com/mkkellogg/GaussianSplats3D/blob/main/src/loaders/spz/SpzLoader.js
+
+class SPZParser extends X3D .X3DParser
+{
+   constructor (scene)
+   {
+      super (scene);
+
+      this .offset = 0;
+   }
+
+   getEncoding ()
+   {
+      return "ARRAY_BUFFER";
+   }
+
+   setInput (buffer)
+   {
+      this .buffer   = buffer;
+      this .dataView = new DataView (buffer);
+      this .header   = this .parseHeader ();
+   }
+
+   isValid ()
+   {
+      const { magic, version, shDegree } = this .header;
+
+      // Check magic.
+
+      if (magic !== 0x5053474e)
+         return false;
+
+      // Validate header.
+
+      if (version < 1 || version > 2)
+         return false;
+
+      if (shDegree > 3)
+         return false;
+
+      return true;
+   }
+
+   parseIntoScene (resolve, reject)
+   {
+      this .spz ()
+         .then (resolve)
+         .catch (reject);
+   }
+
+   async spz ()
+   {
+      const
+         browser = this .getBrowser (),
+         scene   = this .getScene ();
+
+      scene .setEncoding ("SPZ");
+      scene .setProfile (browser .getProfile ("Interchange"));
+      scene .addComponent (browser .getComponent ("X_ITE"));
+
+      await this .getBrowser () .loadComponents (scene);
+
+      const
+         transform      = scene .createNode ("Transform"),
+         gaussianSplats = scene .createNode ("GaussianSplats"),
+         splats         = this .parseSplats ();
+
+      gaussianSplats .positions    = splats .positions;
+      gaussianSplats .orientations = splats .orientations;
+      gaussianSplats .scales       = splats .scales;
+      gaussianSplats .opacities    = splats .opacities;
+
+      gaussianSplats .sphericalHarmonicsDegree0Coef0 = splats .colors;
+
+      const degrees = this .header .shDegree;
+
+      for (let d = 0; d < degrees; ++ d)
+      {
+         const coefs = this .coefsForDegree (d);
+
+         for (let c = 0; c < coefs; ++ c)
+            gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splats .shs [d] [c];
+      }
+
+      transform .rotation = new X3D .Rotation4 (1, 0, 0, Math .PI);
+
+      transform .children .push (gaussianSplats);
+      scene .rootNodes .push (transform);
+
+      return scene;
+   }
+
+   parseHeader ()
+   {
+      const { dataView } = this;
+
+      const header = {
+         magic: dataView .getUint32 (this .offset, true),
+         version: dataView .getUint32 (this .offset += 4, true),
+         numPoints: dataView .getUint32 (this .offset += 4, true),
+         shDegree: dataView .getUint8 (this .offset += 4),
+         fractionalBits: dataView .getUint8 (this .offset += 1),
+         flags: dataView .getUint8 (this .offset += 1),
+         reserved: dataView .getUint8 (this .offset += 1),
+      };
+
+      this .offset += 1;
+
+      return header;
+   }
+
+   parseSplats ()
+   {
+      const { version, numPoints, shDegree, fractionalBits, flags } = this .header;
+
+      const
+         shDimension = this .dimForDegree (shDegree),
+         usesFloat16 = version === 1;
+
+      // Initialize packed object.
+
+      const packed = {
+         numPoints,
+         shDegree,
+         fractionalBits,
+         antialiased: (flags & ANTIALIASED_FLAG) !== 0,
+         numPositions: numPoints * 3 * (usesFloat16 ? 2 : 3),
+         numRotations: numPoints * 3,
+         numScales: numPoints * 3,
+         numOpacities: numPoints,
+         numColors: numPoints * 3,
+         numShs: numPoints * shDimension * 3,
+      };
+
+      // Read data sections.
+
+      const array = new Uint8Array (this .buffer);
+
+      let currentOffset = this .offset;
+
+      packed .positions = array .subarray (currentOffset, currentOffset += packed .numPositions);
+      packed .opacities = array .subarray (currentOffset, currentOffset += packed .numOpacities);
+      packed .colors    = array .subarray (currentOffset, currentOffset += packed .numColors);
+      packed .scales    = array .subarray (currentOffset, currentOffset += packed .numScales);
+      packed .rotations = array .subarray (currentOffset, currentOffset += packed .numRotations);
+      packed .shs       = array .subarray (currentOffset, currentOffset += packed .numShs);
+
+      // Verify we read the expected amount of data.
+
+      if (currentOffset !== this .buffer .byteLength)
+         throw new Error ("x_ite-spz-parser: incorrect buffer size.");
+
+      return this .unpackSplats (packed);
+   }
+
+   unpackSplats (packed)
+   {
+      const { numPoints, positions, rotations, scales, colors, shs, shDegree } = packed;
+      const shDimension = this .dimForDegree (shDegree);
+      const usesFloat16 = positions .length === numPoints * 3 * 2;
+
+      // Validate sizes.
+
+      if (!this .checkSizes2 (packed, numPoints, shDimension, usesFloat16))
+         throw new Error ("x_ite-spz-parser: incorrect array sizes.");
+
+      const
+         splatPositions    = [ ],
+         splatOrientations = [ ],
+         splatScales       = [ ],
+         splatOpacities    = [ ],
+         splatColors       = [ ],
+         splatShs          = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
+
+      let halfData;
+
+      if (usesFloat16)
+         halfData = new Uint16Array (positions .buffer, positions .byteOffset, numPoints * 3);
+
+      const
+         fullPrecisionPositionScale = 1 / (1 << packed .fractionalBits),
+         shCoefPerChannelPerSplat   = this .dimForDegree (shDegree);
+
+      for (let i = 0; i < numPoints; ++ i)
+      {
+         // Get splat position.
+
+         if (usesFloat16)
+         {
+            // Decode legacy float16 format.
+
+            for (let j = 0; j < 3; ++ j)
+               splatPositions .push (this .halfToFloat (halfData [i * 3 + j]));
+         }
+         else
+         {
+            // Decode 24-bit fixed point coordinates.
+
+            for (let j = 0; j < 3; ++ j)
+            {
+               const base = i * 9 + j * 3;
+
+               let fixed32 = positions [base];
+
+               fixed32 |= positions [base + 1] << 8;
+               fixed32 |= positions [base + 2] << 16;
+               fixed32 |= (fixed32 & 0x800000) ? 0xff000000 : 0;
+
+               splatPositions .push (fixed32 * fullPrecisionPositionScale);
+            }
+         }
+
+         // Get splat scale.
+
+         for (let j = 0; j < 3; ++ j)
+            splatScales .push (Math .exp (scales [i * 3 + j] / 16 - 10));
+
+         // Get splat rotation.
+
+         const r = rotations .subarray (i * 3, i * 3 + 3);
+
+         const xyz = [
+            r [0] / 127.5 - 1,
+            r [1] / 127.5 - 1,
+            r [2] / 127.5 - 1,
+         ];
+
+         splatOrientations .push (xyz [0]);
+         splatOrientations .push (xyz [1]);
+         splatOrientations .push (xyz [2]);
+
+         const squaredNorm = Math .hypot (xyz [0], xyz [1], xyz [2]);
+
+         splatOrientations .push (Math .sqrt (Math .max (0, 1 - squaredNorm)));
+
+         // Get splat opacity.
+
+         splatOpacities .push (packed .opacities [i] / 255);
+
+         // Get splat color.
+
+         for (let j = 0; j < 3; ++ j)
+            splatColors .push (((colors [i * 3 + j] / 255) - 0.5) / COLOR_SCALE);
+
+         // Get splat spherical harmonics.
+
+         for (let d = 0, sh = 0; d < shDegree; ++ d)
+         {
+            const coefs = this .coefsForDegree (d);
+
+            for (let c = 0; c < coefs; ++ c)
+            {
+               for (let j = 0; j < 3; ++ j, ++ sh)
+                  splatShs [d] [c] .push (this .unquantizeSH (shs [shCoefPerChannelPerSplat * i * 3 + sh]));
+            }
+         }
+      }
+
+      return {
+         positions: splatPositions,
+         orientations: splatOrientations,
+         scales: splatScales,
+         opacities: splatOpacities,
+         colors: splatColors,
+         shs: splatShs,
+      };
+   }
+
+   // Helper function to check sizes (matching C++ checkSizes function)
+   checkSizes2 (packed, numPoints, shDimension, usesFloat16)
+   {
+      if (packed .positions .length !== numPoints * 3 * (usesFloat16 ? 2 : 3))
+         return false;
+
+      if (packed .scales .length !== numPoints * 3)
+         return false;
+
+      if (packed .rotations .length !== numPoints * 3)
+         return false;
+
+      if (packed .opacities .length !== numPoints)
+         return false;
+
+      if (packed .colors .length !== numPoints * 3)
+         return false;
+
+      if (packed .shs .length !== numPoints * shDimension * 3)
+         return false;
+
+      return true;
+   }
+
+   halfToFloat (h)
+   {
+      const sgn = (h >> 15) & 0x1;
+      const exponent = (h >> 10) & 0x1f;
+      const mantissa = h & 0x3ff;
+
+      const signMul = sgn === 1 ? -1 : 1;
+      if (exponent === 0) {
+         return signMul * Math.pow(2, -14) * mantissa / 1024;
+      }
+
+      if (exponent === 31) {
+         return mantissa !== 0 ? NaN : signMul * Infinity;
+      }
+
+      return signMul * Math.pow(2, exponent - 15) * (1 + mantissa / 1024);
+   }
+
+   unquantizeSH (x)
+   {
+      return (x - 128) / 128;
+   }
+
+   dimForDegree (degree)
+   {
+      switch (degree)
+      {
+         case 0: return 0;
+         case 1: return 3;
+         case 2: return 8;
+         case 3: return 15;
+      }
+   }
+
+   coefsForDegree (degree)
+   {
+      switch (degree)
+      {
+         case 0: return 3;
+         case 1: return 5;
+         case 2: return 7;
+      }
+   }
+}
+
+X3D .GoldenGate .addParsers (SPZParser);
