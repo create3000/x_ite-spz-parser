@@ -8,6 +8,8 @@ const
  * Parser
  */
 
+// https://github.com/mkkellogg/GaussianSplats3D/blob/main/src/loaders/spz/SpzLoader.js
+
 class SPZParser extends X3D .X3DParser
 {
    constructor (scene)
