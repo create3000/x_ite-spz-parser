@@ -1,4 +1,4 @@
-import createSpzModule from "./spz/spz.js";
+import { default as createSpzModule4 } from "./spz4/spz.js";
 
 const X3D = window [Symbol .for ("X_ITE.X3D")];
 
@@ -151,7 +151,7 @@ class SPZParser extends X3D .X3DParser
    async parseSplats4 ()
    {
       const
-         SpzModule     = await createSpzModule (),
+         SpzModule     = await createSpzModule4 (),
          gaussianCloud = SpzModule .loadSpzFromBuffer (new Uint8Array (this .buffer), { to: 8 });
 
       return gaussianCloud;
