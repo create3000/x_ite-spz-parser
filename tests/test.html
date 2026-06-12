@@ -23,9 +23,11 @@ $("#file-input") .on ("change", (event) =>
 
   const reader = new FileReader ();
 
-  reader .onload = (event) =>
+  reader .onload = async (event) =>
   {
-    X3D .getBrowser () .loadURL (new X3D .MFString (event .target .result));
+    await X3D .getBrowser () .loadURL (new X3D .MFString (event .target .result));
+
+    X3D .getBrowser () .viewAll (0);
   };
 
   reader .readAsDataURL (file);
