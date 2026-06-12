@@ -23,7 +23,7 @@ class SPZParser extends X3D .X3DParser
 
    isValid ()
    {
-      return this .input .match (/^OFF/);
+      return true;
    }
 
    parseIntoScene (resolve, reject)
