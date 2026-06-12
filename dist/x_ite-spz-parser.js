@@ -18,11 +18,17 @@ class SPZParser extends X3D .X3DParser
 
    setInput (input)
    {
-      this .input = input;
+      this .input    = input;
+      this .dataView = new DataView (input);
    }
 
    isValid ()
    {
+      // Check magic.
+
+      if (this .dataView .getUint32 (0, true) !== 1347635022)
+         return false;
+
       return true;
    }
 
