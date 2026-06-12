@@ -8,7 +8,7 @@
     "dist/*"
   ],
   "scripts": {
-    "dist": "terser -c -m -o ./dist/x_ite-spz-parser.js ./src/x_ite-spz-parser.js",
+    "dist": "cp ./dist/x_ite-spz-parser.js ./src/x_ite-spz-parser.js",
     "prerelease": "npm run dist",
     "release": "node build/release.js"
   },
@@ -39,7 +39,6 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
-    "shell-tools": "^1.1.9",
-    "terser": "^5.48.0"
+    "shell-tools": "^1.1.9"
   }
 }
