@@ -8,6 +8,7 @@
     "dist/*"
   ],
   "scripts": {
+    "dist": "terser -c -m -p bare_returns -o ./dist/x_ite-spz-parser.js ./src/x_ite-spz-parser.js",
     "release": "node build/release.js"
   },
   "repository": {
@@ -37,6 +38,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
-    "shell-tools": "^1.1.9"
+    "shell-tools": "^1.1.9",
+    "terser": "^5.48.0"
   }
 }
