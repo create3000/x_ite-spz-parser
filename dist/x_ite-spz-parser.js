@@ -26,7 +26,7 @@ class SPZParser extends X3D .X3DParser
    {
       // Check magic.
 
-      if (this .dataView .getUint32 (0, true) !== 1347635022)
+      if (this .dataView .getUint32 (0, true) !== 0x5053474e)
          return false;
 
       return true;
