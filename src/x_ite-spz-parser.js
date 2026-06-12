@@ -102,8 +102,9 @@ class SPZParser extends X3D .X3DParser
 
       scene .setEncoding ("SPZ");
       scene .setProfile (browser .getProfile ("Interchange"));
+      scene .addComponent (browser .getComponent ("X_ITE"));
 
-      await this .loadComponents ();
+      await this .getBrowser () .loadComponents (scene);
 
       return scene;
    }
