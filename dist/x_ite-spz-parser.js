@@ -70,7 +70,7 @@ class SPZParser extends X3D .X3DParser
    {
       const { dataView } = this;
 
-      return {
+      const header = {
          magic: dataView .getUint32 (this .offset, true),
          version: dataView .getUint32 (this .offset += 4, true),
          numPoints: dataView .getUint32 (this .offset += 4, true),
@@ -79,6 +79,10 @@ class SPZParser extends X3D .X3DParser
          flags: dataView .getUint8 (this .offset += 1),
          reserved: dataView .getUint8 (this .offset += 1),
       };
+
+      this .offset += 1;
+
+      return header;
    }
 }
 
