@@ -1,6 +1,6 @@
 {
   "name": "x_ite-off-parser",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "OFF 3D File Format Parser for X_ITE",
   "main": "dist/x_ite-off-parser.js",
   "module": "dist/x_ite-off-parser.js",
@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "dist": "terser -c -m -o ./dist/x_ite-spz-parser.js ./src/x_ite-spz-parser.js",
+    "prerelease": "npm run dist",
     "release": "node build/release.js"
   },
   "repository": {
