@@ -25,12 +25,16 @@ $("#file-input") .on ("change", (event) =>
 
   reader .onload = async (event) =>
   {
-    await X3D .getBrowser () .loadURL (new X3D .MFString (event .target .result));
+    const url = URL .createObjectURL (new Blob ([event .target .result], { type: "application/octet-stream" }));
+
+    await X3D .getBrowser () .loadURL (new X3D .MFString (url));
+
+    URL .revokeObjectURL (url);
 
     X3D .getBrowser () .viewAll (0);
   };
 
-  reader .readAsDataURL (file);
+  reader .readAsArrayBuffer (file);
 });
     </script>
     <style>
