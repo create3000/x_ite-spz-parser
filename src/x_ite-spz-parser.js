@@ -92,7 +92,7 @@ class SPZParser extends X3D .X3DParser
 
       // Verify we read the expected amount of data
       if (currentOffset !== this .buffer .byteLength)
-         throw new Error ("x_ite-spz-parsser: incorrect buffer size.");
+         throw new Error ("x_ite-spz-parser: incorrect buffer size.");
 
       console .log (result)
 
