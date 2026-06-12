@@ -18,17 +18,17 @@ $("#file-input") .on ("change", (event) =>
 {
   const file = event .target .files [0];
 
-  if (file)
+  if (!file)
+    return;
+
+  const reader = new FileReader ();
+
+  reader .onload = (event) =>
   {
-    const reader = new FileReader ();
+    X3D .getBrowser () .loadURL (new X3D .MFString (event .target .result));
+  };
 
-    reader .onload = (event) =>
-    {
-      X3D .getBrowser () .loadURL (new X3D .MFString (event .target .result));
-    };
-
-    reader .readAsDataURL (file);
-  }
+  reader .readAsDataURL (file);
 });
     </script>
     <style>
