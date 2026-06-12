@@ -187,12 +187,11 @@ class SPZParser extends X3D .X3DParser
 
       const
          fullPrecisionPositionScale = 1 / (1 << packed .fractionalBits),
-         shCoefPerChannelPerSplat   = this .dimForDegree (shDegree),
-         sphericalHarmonics         = [ ];
+         shCoefPerChannelPerSplat   = this .dimForDegree (shDegree);
 
       for (let i = 0; i < numPoints; ++ i)
       {
-         // Splat position.
+         // Get splat position.
 
          if (usesFloat16)
          {
@@ -219,12 +218,12 @@ class SPZParser extends X3D .X3DParser
             }
          }
 
-         // Splat scale.
+         // Get splat scale.
 
          for (let j = 0; j < 3; ++ j)
             splatScales .push (Math .exp (scales [i * 3 + j] / 16 - 10));
 
-         // Splat rotation.
+         // Get splat rotation.
 
          const r = rotations .subarray (i * 3, i * 3 + 3);
 
@@ -242,25 +241,16 @@ class SPZParser extends X3D .X3DParser
 
          splatOrientations .push (Math .sqrt (Math .max (0, 1 - squaredNorm)));
 
-         // Splat opacity
-         // splat .opacity = invSigmoid (packed .opacities [i] / 255);
+         // Get splat opacity.
 
          splatOpacities .push (packed .opacities [i] / 255);
 
-         // Splat color
+         // Get splat color.
 
          for (let j = 0; j < 3; ++ j)
             splatColors .push (((colors [i * 3 + j] / 255) - 0.5) / COLOR_SCALE);
 
-         // Splat spherical harmonics
-
-         sphericalHarmonics .length = 0;
-
-         for (let j = 0; j < shCoefPerChannelPerSplat; ++ j)
-         {
-            for (let k = 0; k < 3; ++ k)
-               sphericalHarmonics .push (this .unquantizeSH (shs [shCoefPerChannelPerSplat * 3 * i + j * 3 + k]));
-         }
+         // Get splat spherical harmonics.
 
          for (let d = 0, sh = 0; d < shDegree; ++ d)
          {
@@ -268,8 +258,8 @@ class SPZParser extends X3D .X3DParser
 
             for (let c = 0; c < coefs; ++ c)
             {
-               for (let j = 0; j < 3; ++ j)
-                  splatShs [d] [c] .push (sphericalHarmonics [sh ++]);
+               for (let j = 0; j < 3; ++ j, ++ sh)
+                  splatShs [d] [c] .push (this .unquantizeSH (shs [shCoefPerChannelPerSplat * i * 3 + sh]));
             }
          }
       }
