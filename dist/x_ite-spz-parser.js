@@ -27,17 +27,19 @@ class SPZParser extends X3D .X3DParser
 
    isValid ()
    {
+      const { magic, version, shDegree } = this .header;
+
       // Check magic.
 
-      if (this .header .magic !== 0x5053474e)
+      if (magic !== 0x5053474e)
          return false;
 
       // Validate header.
 
-      if (this .header .version < 1 || this .header .version > 2)
+      if (version < 1 || version > 2)
          return false;
 
-      if (this .header .shDegree > 3)
+      if (shDegree > 3)
          return false;
 
       return true;
