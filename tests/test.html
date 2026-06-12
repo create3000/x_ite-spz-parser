@@ -24,14 +24,26 @@ $("#file-input") .on ("change", (event) =>
 
     reader .onload = (event) =>
     {
-      const content = event .target .result;
+      const base64 = arrayBufferToBase64 (event .target .result);
 
-      X3D .getBrowser () .loadURL (new X3D .MFString (`data:model/spz;base64,${btoa (content)}`));
+      X3D .getBrowser () .loadURL (new X3D .MFString (`data:model/spz;base64,${base64}`));
     };
 
-    reader .readAsText (file);
+    reader .readAsArrayBuffer (file);
   }
 });
+
+function arrayBufferToBase64 (buffer)
+{
+  const bytes = new Uint8Array (buffer);
+
+  let binary = "";
+
+  for (let i = 0; i < bytes .length; i++)
+    binary += String .fromCharCode (bytes [i]);
+
+  return btoa (binary);
+}
     </script>
     <style>
 :root {
