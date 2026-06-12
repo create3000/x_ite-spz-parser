@@ -1,3 +1,5 @@
+import createSpzModule from "./spz/spz.js";
+
 const X3D = window [Symbol .for ("X_ITE.X3D")];
 
 const
@@ -42,7 +44,7 @@ class SPZParser extends X3D .X3DParser
 
       // Validate header.
 
-      if (version < 1 || version > 2)
+      if (version < 1 || version > 4)
          return false;
 
       if (shDegree > 3)
@@ -71,31 +73,43 @@ class SPZParser extends X3D .X3DParser
       await this .getBrowser () .loadComponents (scene);
 
       const
+         version        = this .header .version,
          transform      = scene .createNode ("Transform"),
          gaussianSplats = scene .createNode ("GaussianSplats"),
-         splats         = this .parseSplats ();
+         gaussianCloud  = await this .parseSplats ();
 
-      gaussianSplats .positions    = splats .positions;
-      gaussianSplats .orientations = splats .orientations;
-      gaussianSplats .scales       = splats .scales;
-      gaussianSplats .opacities    = splats .opacities;
+      console .log (gaussianCloud)
 
-      gaussianSplats .sphericalHarmonicsDegree0Coef0 = splats .colors;
+      gaussianSplats .positions    = gaussianCloud .positions;
+      gaussianSplats .orientations = gaussianCloud .rotations;
+      gaussianSplats .scales       = gaussianCloud .scales .map (value => Math .exp (value));
+      gaussianSplats .opacities    = gaussianCloud .alphas .map (value => 1 / (1 + Math .exp (-value)));
 
-      const degrees = this .header .shDegree;
+      gaussianSplats .sphericalHarmonicsDegree0Coef0 = gaussianCloud .colors;
 
-      for (let d = 0; d < degrees; ++ d)
-      {
-         const coefs = this .coefsForDegree (d);
+      // const degrees = this .header .shDegree;
 
-         for (let c = 0; c < coefs; ++ c)
-            gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splats .shs [d] [c];
-      }
+      // for (let d = 0; d < degrees; ++ d)
+      // {
+      //    const coefs = this .coefsForDegree (d);
+
+      //    for (let c = 0; c < coefs; ++ c)
+      //       gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splats .shs [d] [c];
+      // }
 
       transform .rotation = new X3D .Rotation4 (1, 0, 0, Math .PI);
 
-      transform .children .push (gaussianSplats);
-      scene .rootNodes .push (transform);
+      switch (version)
+      {
+         case 1:
+         case 2:
+            transform .children .push (gaussianSplats);
+            scene .rootNodes .push (transform);
+            break
+         default:
+            scene .rootNodes .push (gaussianSplats);
+            break;
+      }
 
       return scene;
    }
@@ -119,7 +133,31 @@ class SPZParser extends X3D .X3DParser
       return header;
    }
 
-   parseSplats ()
+   async parseSplats ()
+   {
+      const { version } = this .header;
+
+      switch (version)
+      {
+         case 1:
+         case 2:
+            return await this .parseSplats12 ();
+         case 3:
+         case 4:
+            return await this .parseSplats4 ();
+      }
+   }
+
+   async parseSplats4 ()
+   {
+      const
+         SpzModule     = await createSpzModule (),
+         gaussianCloud = SpzModule .loadSpzFromBuffer (new Uint8Array (this .buffer), { to: 8 });
+
+      return gaussianCloud;
+   }
+
+   parseSplats12 ()
    {
       const { version, numPoints, shDegree, fractionalBits, flags } = this .header;
 
@@ -175,12 +213,12 @@ class SPZParser extends X3D .X3DParser
          throw new Error ("x_ite-spz-parser: incorrect array sizes.");
 
       const
-         splatPositions    = [ ],
-         splatOrientations = [ ],
-         splatScales       = [ ],
-         splatOpacities    = [ ],
-         splatColors       = [ ],
-         splatShs          = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
+         splatPositions = [ ],
+         splatRotations = [ ],
+         splatScales    = [ ],
+         splatAlphas    = [ ],
+         splatColors    = [ ],
+         splatShs       = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
 
       let halfData;
 
@@ -223,7 +261,7 @@ class SPZParser extends X3D .X3DParser
          // Get splat scale.
 
          for (let j = 0; j < 3; ++ j)
-            splatScales .push (Math .exp (scales [i * 3 + j] / 16 - 10));
+            splatScales .push (scales [i * 3 + j] / 16 - 10);
 
          // Get splat rotation.
 
@@ -235,17 +273,17 @@ class SPZParser extends X3D .X3DParser
             r [2] / 127.5 - 1,
          ];
 
-         splatOrientations .push (xyz [0]);
-         splatOrientations .push (xyz [1]);
-         splatOrientations .push (xyz [2]);
+         splatRotations .push (xyz [0]);
+         splatRotations .push (xyz [1]);
+         splatRotations .push (xyz [2]);
 
          const squaredNorm = Math .hypot (xyz [0], xyz [1], xyz [2]);
 
-         splatOrientations .push (Math .sqrt (Math .max (0, 1 - squaredNorm)));
+         splatRotations .push (Math .sqrt (Math .max (0, 1 - squaredNorm)));
 
          // Get splat opacity.
 
-         splatOpacities .push (packed .opacities [i] / 255);
+         splatAlphas .push (this .invSigmoid (packed .opacities [i] / 255));
 
          // Get splat color.
 
@@ -268,12 +306,17 @@ class SPZParser extends X3D .X3DParser
 
       return {
          positions: splatPositions,
-         orientations: splatOrientations,
+         rotations: splatRotations,
          scales: splatScales,
-         opacities: splatOpacities,
+         alphas: splatAlphas,
          colors: splatColors,
          shs: splatShs,
       };
+   }
+
+   invSigmoid (x)
+   {
+      return Math .log (x / (1 - x));
    }
 
    // Helper function to check sizes (matching C++ checkSizes function)
