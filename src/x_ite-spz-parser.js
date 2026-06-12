@@ -245,12 +245,12 @@ class SPZParser extends X3D .X3DParser
          // Splat opacity
          // splat .opacity = invSigmoid (packed .opacities [i] / 255);
 
-         splatOpacities .push (Math .floor (packed .opacities [i]) / 255);
+         splatOpacities .push (packed .opacities [i] / 255);
 
          // Splat color
 
          for (let j = 0; j < 3; ++ j)
-            splatColors .push (Math .floor (((colors [i * 3 + j] / 255) - 0.5) / COLOR_SCALE));
+            splatColors .push (((colors [i * 3 + j] / 255) - 0.5) / COLOR_SCALE);
 
          // Splat spherical harmonics
 
