@@ -73,14 +73,22 @@ class SPZParser extends X3D .X3DParser
          gaussianSplats = scene .createNode ("GaussianSplats"),
          splats         = this .parseSplats ();
 
-      console .log (splats);
-
       gaussianSplats .positions    = splats .positions;
       gaussianSplats .orientations = splats .orientations;
       gaussianSplats .scales       = splats .scales;
       gaussianSplats .opacities    = splats .opacities;
 
       gaussianSplats .sphericalHarmonicsDegree0Coef0 = splats .colors;
+
+      const degrees = this .header .shDegree;
+
+      for (let d = 0; d < degrees; ++ d)
+      {
+         const coefs = this .coefsForDegree (d);
+
+         for (let c = 0; c < coefs; ++ c)
+            gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splats .shs [d] [c];
+      }
 
       transform .rotation = new X3D .Rotation4 (1, 0, 0, Math .PI);
 
@@ -129,7 +137,7 @@ class SPZParser extends X3D .X3DParser
          numScales: numPoints * 3,
          numOpacities: numPoints,
          numColors: numPoints * 3,
-         numSh: numPoints * shDimension * 3,
+         numShs: numPoints * shDimension * 3,
       };
 
       // Read data sections.
@@ -143,7 +151,7 @@ class SPZParser extends X3D .X3DParser
       packed .colors    = array .subarray (currentOffset, currentOffset += packed .numColors);
       packed .scales    = array .subarray (currentOffset, currentOffset += packed .numScales);
       packed .rotations = array .subarray (currentOffset, currentOffset += packed .numRotations);
-      packed .sh        = array .subarray (currentOffset, currentOffset += packed .numSh);
+      packed .shs       = array .subarray (currentOffset, currentOffset += packed .numShs);
 
       // Verify we read the expected amount of data.
 
@@ -155,28 +163,22 @@ class SPZParser extends X3D .X3DParser
 
    unpackSplats (packed)
    {
-      const { numPoints, positions, rotations, scales, colors, shDegree } = packed;
+      const { numPoints, positions, rotations, scales, colors, shs, shDegree } = packed;
       const shDimension = this .dimForDegree (shDegree);
       const usesFloat16 = positions .length === numPoints * 3 * 2;
 
-      // Validate sizes
+      // Validate sizes.
+
       if (!this .checkSizes2 (packed, numPoints, shDimension, usesFloat16))
          throw new Error ("x_ite-spz-parser: incorrect array sizes.");
-
-      const splat = {
-         position: [ ],
-         scale: [ ],
-         rotation: [ ],
-         color: [ ],
-         sh: [ ]
-      };
 
       const
          splatPositions    = [ ],
          splatOrientations = [ ],
          splatScales       = [ ],
          splatOpacities    = [ ],
-         splatColors       = [ ];
+         splatColors       = [ ],
+         splatShs          = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
 
       let halfData;
 
@@ -185,14 +187,17 @@ class SPZParser extends X3D .X3DParser
 
       const
          fullPrecisionPositionScale = 1 / (1 << packed .fractionalBits),
-         shCoefPerChannelPerSplat   = this .dimForDegree (packed .shDegree);
+         shCoefPerChannelPerSplat   = this .dimForDegree (shDegree),
+         sphericalHarmonics         = [ ];
 
       for (let i = 0; i < numPoints; ++ i)
       {
          // Splat position.
+
          if (usesFloat16)
          {
             // Decode legacy float16 format.
+
             for (let j = 0; j < 3; ++ j)
                splatPositions .push (this .halfToFloat (halfData [i * 3 + j]));
          }
@@ -214,11 +219,13 @@ class SPZParser extends X3D .X3DParser
             }
          }
 
-         // Splat scale
+         // Splat scale.
+
          for (let j = 0; j < 3; ++ j)
             splatScales .push (Math .exp (scales [i * 3 + j] / 16 - 10));
 
-         // Splat rotation
+         // Splat rotation.
+
          const r = rotations .subarray (i * 3, i * 3 + 3);
 
          const xyz = [
@@ -237,22 +244,34 @@ class SPZParser extends X3D .X3DParser
 
          // Splat opacity
          // splat .opacity = invSigmoid (packed .opacities [i] / 255);
+
          splatOpacities .push (Math .floor (packed .opacities [i]) / 255);
 
          // Splat color
+
          for (let j = 0; j < 3; ++ j)
-         {
             splatColors .push (Math .floor (((colors [i * 3 + j] / 255) - 0.5) / COLOR_SCALE));
+
+         // Splat spherical harmonics
+
+         sphericalHarmonics .length = 0;
+
+         for (let j = 0; j < shCoefPerChannelPerSplat; ++ j)
+         {
+            for (let k = 0; k < 3; ++ k)
+               sphericalHarmonics .push (this .unquantizeSH (shs [shCoefPerChannelPerSplat * 3 * i + j * 3 + k]));
          }
 
-         // // Splat spherical harmonics
-         // for (let j = 0; j < 3; ++ j)
-         // {
-         //    for (let k = 0; k < shCoefPerChannelPerSplat; k++)
-         //    {
-         //       splat .sh [j * shCoefPerChannelPerSplat + k] = this .unquantizeSH (sh [shCoefPerChannelPerSplat * 3 * i + k * 3 + j]);
-         //    }
-         // }
+         for (let d = 0, sh = 0; d < shDegree; ++ d)
+         {
+            const coefs = this .coefsForDegree (d);
+
+            for (let c = 0; c < coefs; ++ c)
+            {
+               for (let j = 0; j < 3; ++ j)
+                  splatShs [d] [c] .push (sphericalHarmonics [sh ++]);
+            }
+         }
       }
 
       return {
@@ -261,6 +280,7 @@ class SPZParser extends X3D .X3DParser
          scales: splatScales,
          opacities: splatOpacities,
          colors: splatColors,
+         shs: splatShs,
       };
    }
 
@@ -282,7 +302,7 @@ class SPZParser extends X3D .X3DParser
       if (packed .colors .length !== numPoints * 3)
          return false;
 
-      if (packed .sh .length !== numPoints * shDimension * 3)
+      if (packed .shs .length !== numPoints * shDimension * 3)
          return false;
 
       return true;
@@ -319,6 +339,16 @@ class SPZParser extends X3D .X3DParser
          case 1: return 3;
          case 2: return 8;
          case 3: return 15;
+      }
+   }
+
+   coefsForDegree (degree)
+   {
+      switch (degree)
+      {
+         case 0: return 3;
+         case 1: return 5;
+         case 2: return 7;
       }
    }
 }
