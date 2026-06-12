@@ -1,0 +1,39 @@
+{
+  "name": "x_ite-off-parser",
+  "version": "1.0.7",
+  "description": "OFF 3D File Format Parser for X_ITE",
+  "main": "dist/x_ite-off-parser.js",
+  "module": "dist/x_ite-off-parser.js",
+  "files": [
+    "dist/*"
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/create3000/x_ite-off-parser.git"
+  },
+  "keywords": [
+    "3D",
+    "Browser",
+    "JavaScript",
+    "Node",
+    "OFF",
+    "x_ite",
+    "X3D"
+  ],
+  "author": "Holger Seelig <holger.seelig@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/create3000/x_ite-off-parser/issues"
+  },
+  "homepage": "https://github.com/create3000/x_ite-off-parser#readme",
+  "funding": {
+    "type": "patreon",
+    "url": "https://patreon.com/X_ITE"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0"
+  }
+}
