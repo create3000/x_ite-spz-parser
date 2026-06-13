@@ -25,9 +25,6 @@ module .exports = async () =>
       },
       mode: "production",
       module: {
-         parser: {
-            javascript : { importMeta: false },
-         },
          rules: [ ],
       },
       optimization: {
