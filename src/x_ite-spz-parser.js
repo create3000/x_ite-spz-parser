@@ -86,6 +86,8 @@ class SPZParser extends X3D .X3DParser
       gaussianSplats .scales       = gaussianCloud .scales .map (value => Math .exp (value));
       gaussianSplats .opacities    = gaussianCloud .alphas .map (value => 1 / (1 + Math .exp (-value)));
 
+      console .log (gaussianCloud .positions .slice (0, 3))
+
       gaussianSplats .sphericalHarmonicsDegree0Coef0 = gaussianCloud .colors;
 
       // Set spherical harmonics.
@@ -186,7 +188,7 @@ class SPZParser extends X3D .X3DParser
       const
          SpzModule     = await createSpzModule4 (),
          data          = new Uint8Array (this .buffer),
-         gaussianCloud = SpzModule .loadSpzFromBuffer (data, { to: SpzModule .CoordinateSystem .LUF });
+         gaussianCloud = SpzModule .loadSpzFromBuffer (data, { to: SpzModule .CoordinateSystem .RUB });
 
       return gaussianCloud;
    }
