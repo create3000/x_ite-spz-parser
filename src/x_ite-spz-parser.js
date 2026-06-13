@@ -44,8 +44,15 @@ class SPZParser extends X3D .X3DParser
 
       // Validate header.
 
-      if (version < 1 || version > 4)
-         return false;
+      switch (version)
+      {
+         case 1:
+         case 2:
+         case 4:
+            break;
+         default:
+            return false;
+      }
 
       if (shDegree > 3)
          return false;
@@ -142,7 +149,6 @@ class SPZParser extends X3D .X3DParser
          case 1:
          case 2:
             return await this .parseSplats12 ();
-         case 3:
          case 4:
             return await this .parseSplats4 ();
       }
