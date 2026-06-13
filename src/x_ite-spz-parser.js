@@ -91,14 +91,16 @@ class SPZParser extends X3D .X3DParser
       // Set spherical harmonics.
 
       const
-         numPoints                = gaussianCloud .numPoints,
-         shs                      = gaussianCloud .sh,
-         shDegree                 = Math .min (gaussianCloud .shDegree, 3),
-         shCoefPerChannelPerSplat = this .dimForDegree (shDegree),
-         splatShs                 = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
+         numPoints                 = gaussianCloud .numPoints,
+         shs                       = gaussianCloud .sh,
+         shDegree                  =gaussianCloud .shDegree,
+         shCoefPerChannelPerSplat3 = this .dimForDegree (shDegree) * 3,
+         splatShs                  = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
 
       for (let i = 0; i < numPoints; ++ i)
       {
+         const stride = shCoefPerChannelPerSplat3 * i;
+
          for (let d = 0, sh = 0; d < shDegree; ++ d)
          {
             const
@@ -110,12 +112,15 @@ class SPZParser extends X3D .X3DParser
                const shsDC = shsD [c];
 
                for (let j = 0; j < 3; ++ j, ++ sh)
-                  shsDC .push (shs [shCoefPerChannelPerSplat * i * 3 + sh]);
+                  shsDC .push (shs [stride + sh]);
             }
          }
       }
 
-      for (let d = 0; d < shDegree; ++ d)
+      // GaussianSplats node only supports up to degree 3.
+      const shDegreeMax = Math .min (shDegree, 3);
+
+      for (let d = 0; d < shDegreeMax; ++ d)
       {
          const coefs = this .coefsForDegree (d);
 
@@ -406,6 +411,7 @@ class SPZParser extends X3D .X3DParser
          case 0: return 3;
          case 1: return 5;
          case 2: return 7;
+         case 3: return 9;
       }
    }
 }
