@@ -1,4 +1,4 @@
-import { default as createSpzModule4 } from "./spz4/spz.js";
+import { default as createSpzModule4 } from "./spz-3.0.0/spz.js";
 
 const X3D = window [Symbol .for ("X_ITE.X3D")];
 
@@ -35,7 +35,7 @@ class SPZParser extends X3D .X3DParser
 
    isValid ()
    {
-      const { magic, version, shDegree } = this .header;
+      const { magic, version } = this .header;
 
       // Check magic.
 
