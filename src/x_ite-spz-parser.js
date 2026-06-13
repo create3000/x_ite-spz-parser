@@ -54,9 +54,6 @@ class SPZParser extends X3D .X3DParser
             return false;
       }
 
-      if (shDegree > 3)
-         return false;
-
       return true;
    }
 
@@ -81,11 +78,8 @@ class SPZParser extends X3D .X3DParser
 
       const
          version        = this .header .version,
-         transform      = scene .createNode ("Transform"),
          gaussianSplats = scene .createNode ("GaussianSplats"),
          gaussianCloud  = await this .parseSplats ();
-
-      console .log (gaussianCloud)
 
       gaussianSplats .positions    = gaussianCloud .positions;
       gaussianSplats .orientations = gaussianCloud .rotations;
@@ -94,28 +88,61 @@ class SPZParser extends X3D .X3DParser
 
       gaussianSplats .sphericalHarmonicsDegree0Coef0 = gaussianCloud .colors;
 
-      // const degrees = gaussianSplats .shDegree;
+      // Set spherical harmonics.
 
-      // for (let d = 0; d < degrees; ++ d)
-      // {
-      //    const coefs = this .coefsForDegree (d);
+      const
+         numPoints                = gaussianCloud .numPoints,
+         shs                      = gaussianCloud .sh,
+         shDegree                 = Math .min (gaussianCloud .shDegree, 3),
+         shCoefPerChannelPerSplat = this .dimForDegree (shDegree),
+         splatShs                 = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
 
-      //    for (let c = 0; c < coefs; ++ c)
-      //       gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splats .shs [d] [c];
-      // }
+      for (let i = 0; i < numPoints; ++ i)
+      {
+         for (let d = 0, sh = 0; d < shDegree; ++ d)
+         {
+            const
+               coefs = this .coefsForDegree (d),
+               shsD  = splatShs [d];
 
-      transform .rotation = new X3D .Rotation4 (1, 0, 0, Math .PI);
+            for (let c = 0; c < coefs; ++ c)
+            {
+               const shsDC = shsD [c];
+
+               for (let j = 0; j < 3; ++ j, ++ sh)
+                  shsDC .push (shs [shCoefPerChannelPerSplat * i * 3 + sh]);
+            }
+         }
+      }
+
+      for (let d = 0; d < shDegree; ++ d)
+      {
+         const coefs = this .coefsForDegree (d);
+
+         for (let c = 0; c < coefs; ++ c)
+            gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splatShs [d] [c];
+      }
+
+      // Add nodes to scene.
 
       switch (version)
       {
          case 1:
          case 2:
+         {
+            const transform = scene .createNode ("Transform");
+
+            transform .rotation = new X3D .Rotation4 (1, 0, 0, Math .PI);
+
             transform .children .push (gaussianSplats);
             scene .rootNodes .push (transform);
-            break
+            break;
+         }
          default:
+         {
             scene .rootNodes .push (gaussianSplats);
             break;
+         }
       }
 
       return scene;
@@ -225,16 +252,14 @@ class SPZParser extends X3D .X3DParser
          splatScales    = [ ],
          splatAlphas    = [ ],
          splatColors    = [ ],
-         splatShs       = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
+         splatShs       = shs .map (value => this .unquantizeSH (value));
 
       let halfData;
 
       if (usesFloat16)
          halfData = new Uint16Array (positions .buffer, positions .byteOffset, numPoints * 3);
 
-      const
-         fullPrecisionPositionScale = 1 / (1 << packed .fractionalBits),
-         shCoefPerChannelPerSplat   = this .dimForDegree (shDegree);
+      const fullPrecisionPositionScale = 1 / (1 << packed .fractionalBits);
 
       for (let i = 0; i < numPoints; ++ i)
       {
@@ -296,28 +321,16 @@ class SPZParser extends X3D .X3DParser
 
          for (let j = 0; j < 3; ++ j)
             splatColors .push (((colors [i * 3 + j] / 255) - 0.5) / COLOR_SCALE);
-
-         // Get splat spherical harmonics.
-
-         for (let d = 0, sh = 0; d < shDegree; ++ d)
-         {
-            const coefs = this .coefsForDegree (d);
-
-            for (let c = 0; c < coefs; ++ c)
-            {
-               for (let j = 0; j < 3; ++ j, ++ sh)
-                  splatShs [d] [c] .push (this .unquantizeSH (shs [shCoefPerChannelPerSplat * i * 3 + sh]));
-            }
-         }
       }
 
       return {
+         numPoints,
          positions: splatPositions,
          rotations: splatRotations,
          scales: splatScales,
          alphas: splatAlphas,
          colors: splatColors,
-         shs: splatShs,
+         sh: splatShs,
          shDegree,
       };
    }
@@ -382,6 +395,7 @@ class SPZParser extends X3D .X3DParser
          case 1: return 3;
          case 2: return 8;
          case 3: return 15;
+         case 4: return 24;
       }
    }
 
