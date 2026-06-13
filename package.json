@@ -8,7 +8,7 @@
     "dist/*"
   ],
   "scripts": {
-    "dist": "cp ./src/x_ite-spz-parser.js ./dist/x_ite-spz-parser.js",
+    "dist": "node build/dist.js",
     "prerelease": "npm run dist",
     "release": "node build/release.js",
     "spz": "node build/spz.js"
@@ -40,6 +40,8 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.1",
     "globals": "^17.6.0",
-    "shell-tools": "^1.1.9"
+    "shell-tools": "^1.1.9",
+    "webpack": "^5.107.2",
+    "webpack-cli": "^7.0.3"
   }
 }
