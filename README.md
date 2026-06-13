@@ -7,6 +7,8 @@
 
 3DGS SPZ File Format Parser for [X_ITE](https://create3000.github.io/x_ite/)
 
+The parser supports files with SPZ format version 1, 2 and 4.
+
 ## Usage
 
 Include the script after X_ITE:
