@@ -94,7 +94,7 @@ class SPZParser extends X3D .X3DParser
 
       gaussianSplats .sphericalHarmonicsDegree0Coef0 = gaussianCloud .colors;
 
-      // const degrees = this .header .shDegree;
+      // const degrees = gaussianSplats .shDegree;
 
       // for (let d = 0; d < degrees; ++ d)
       // {
@@ -318,6 +318,7 @@ class SPZParser extends X3D .X3DParser
          alphas: splatAlphas,
          colors: splatColors,
          shs: splatShs,
+         shDegree,
       };
    }
 
