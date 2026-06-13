@@ -17,23 +17,28 @@ module .exports = async () =>
          path: path .resolve (__dirname, "dist"),
          filename: "[name].js",
          library: {
-            name: entry,
-            export: ["default"],
-            type: "umd",
+            type: "module",
          },
+      },
+      experiments: {
+         outputModule: true,
       },
       mode: "production",
       module: {
+         parser: {
+            javascript : { importMeta: false },
+         },
          rules: [ ],
       },
       optimization: {
          minimize: true,
          minimizer: [
             new TerserPlugin ({
-               include: /\.min\.js$/,
+               include: /\.min\.mjs$/,
                parallel: true,
                extractComments: true,
                terserOptions: {
+                  module: true,
                   compress: true,
                   mangle: true,
                   format: {
