@@ -152,7 +152,8 @@ class SPZParser extends X3D .X3DParser
    {
       const
          SpzModule     = await createSpzModule4 (),
-         gaussianCloud = SpzModule .loadSpzFromBuffer (new Uint8Array (this .buffer), { to: 8 });
+         data          = new Uint8Array (this .buffer),
+         gaussianCloud = SpzModule .loadSpzFromBuffer (data, { to: SpzModule .CoordinateSystem .LUF });
 
       return gaussianCloud;
    }
