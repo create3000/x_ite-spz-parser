@@ -7,18 +7,16 @@
 
 3DGS SPZ File Format Parser for [X_ITE](https://create3000.github.io/x_ite/)
 
-The parser supports files with SPZ format version 1, 2 and 4.
-
 ## Usage
 
 Include the script after X_ITE:
 
 ```html
 <script defer src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.8/dist/x_ite-spz-parser.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.9/dist/x_ite-spz-parser.min.js"></script>
 <!-- or as ES module -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.mjs"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.8/dist/x_ite-spz-parser.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.9/dist/x_ite-spz-parser.min.js"></script>
 ```
 
 Now you can load 3DGS SPZ files:
