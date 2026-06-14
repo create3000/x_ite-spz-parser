@@ -13,10 +13,10 @@ Include the script after X_ITE:
 
 ```html
 <script defer src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.9/dist/x_ite-spz-parser.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.10/dist/x_ite-spz-parser.min.js"></script>
 <!-- or as ES module -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.mjs"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.9/dist/x_ite-spz-parser.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.0.10/dist/x_ite-spz-parser.min.js"></script>
 ```
 
 Now you can load 3DGS SPZ files:
