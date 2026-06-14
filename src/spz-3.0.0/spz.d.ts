@@ -32,14 +32,6 @@ export enum CoordinateSystem {
   RDF,
   LUF,
   RUF,
-  LBD,
-  RBD,
-  LBU,
-  RBU,
-  LFD,
-  RFD,
-  LFU,
-  RFU,
 }
 
 
