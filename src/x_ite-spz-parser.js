@@ -23,9 +23,8 @@ class SPZParser extends X3D .X3DParser
 
    setInput (buffer)
    {
-      this .buffer   = buffer;
-      this .dataView = new DataView (buffer);
-      this .header   = this .parseHeader ();
+      this .buffer = buffer;
+      this .header = this .parseHeader ();
    }
 
    isValid ()
@@ -144,7 +143,7 @@ class SPZParser extends X3D .X3DParser
 
    parseHeader ()
    {
-      const { dataView } = this;
+      const dataView = new DataView (this .buffer);
 
       let offset = 0;
 
