@@ -197,25 +197,12 @@ class SPZParser extends X3D .X3DParser
 
    dimForDegree (degree)
    {
-      switch (degree)
-      {
-         case 0: return 0;
-         case 1: return 3;
-         case 2: return 8;
-         case 3: return 15;
-         case 4: return 24;
-      }
+      return (degree + 1) ** 2 - 1;
    }
 
    coefsForDegree (degree)
    {
-      switch (degree)
-      {
-         case 0: return 3;
-         case 1: return 5;
-         case 2: return 7;
-         case 3: return 9;
-      }
+      return degree * 2 + 3;
    }
 }
 
