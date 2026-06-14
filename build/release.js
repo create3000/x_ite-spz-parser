@@ -7,16 +7,15 @@ function main ()
 {
 	// version
 	const
-		name    = sh (`node -p "require('./package.json').name"`) .trim (),
-		local   = sh (`npm pkg get version | sed 's/"//g'`) .trim (),
-		online  = sh (`npm view ${name} version`) .trim ();
+		name   = sh (`node -p "require('./package.json').name"`) .trim (),
+		online = sh (`npm view ${name} version`) .trim ();
 
 	if (sh (`npm pkg get version | sed 's/"//g'`) .trim () === online)
 		systemSync (`npm version patch --no-git-tag-version --force`);
 
 	const updated = sh (`npm pkg get version | sed 's/"//g'`) .trim ();
 
-	systemSync (`sed -i "" "s|${name}@${local}|${name}@${updated}|g" ./README.md`);
+	systemSync (`sed -i "" -E "s|${name}@[0-9.]+|${name}@${updated}|g" ./README.md`);
 
 	const version = sh (`npm pkg get version | sed 's/"//g'`) .trim ();
 
