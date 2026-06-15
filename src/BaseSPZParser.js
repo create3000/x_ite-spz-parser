@@ -56,42 +56,11 @@ class BaseSPZParser extends X3D .X3DParser
       // Set spherical harmonics.
 
       const
-         numPoints                 = gaussianCloud .numPoints,
-         shs                       = gaussianCloud .sh,
-         shDegree                  = gaussianCloud .shDegree,
-         shCoefPerChannelPerSplat3 = this .dimForDegree (shDegree) * 3,
-         splatShs                  = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
+         numPoints = gaussianCloud .numPoints,
+         shs       = gaussianCloud .sh,
+         shDegree  = gaussianCloud .shDegree;
 
-      for (let i = 0; i < numPoints; ++ i)
-      {
-         const stride = shCoefPerChannelPerSplat3 * i;
-
-         for (let d = 0, sh = 0; d < shDegree; ++ d)
-         {
-            const
-               coefs = this .coefsForDegree (d),
-               shsD  = splatShs [d];
-
-            for (let c = 0; c < coefs; ++ c)
-            {
-               const shsDC = shsD [c];
-
-               for (let j = 0; j < 3; ++ j, ++ sh)
-                  shsDC .push (shs [stride + sh]);
-            }
-         }
-      }
-
-      // GaussianSplats node only supports up to degree 3.
-      const shDegreeMax = Math .min (shDegree, 3);
-
-      for (let d = 0; d < shDegreeMax; ++ d)
-      {
-         const coefs = this .coefsForDegree (d);
-
-         for (let c = 0; c < coefs; ++ c)
-            gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splatShs [d] [c];
-      }
+      this .setSphericalHarmonics (numPoints, shs, shDegree, gaussianSplats);
 
       // Add nodes to scene.
 
@@ -117,6 +86,38 @@ class BaseSPZParser extends X3D .X3DParser
       }
 
       return scene;
+   }
+
+   setSphericalHarmonics (numSplats, shs, shDegree, gaussianSplats)
+   {
+      const
+         shCoeffs  = this .dimForDegree (shDegree),
+         shCoeffs3 = this .dimForDegree (shDegree) * 3,
+         splatShs  = Array .from ({ length: shCoeffs }, () => [ ]);
+
+      for (let c = 0; c < shCoeffs; ++ c)
+      {
+         const splatSh = splatShs [c];
+
+         for (let i = 0; i < numSplats; ++ i)
+         {
+            const stride = shCoeffs3 * i;
+
+            for (let j = 0; j < 3; ++ j)
+               splatSh .push (shs [stride + c * 3 + j]);
+         }
+      }
+
+      // GaussianSplats node only supports up to degree 3.
+      const shDegreeMax = Math .min (shDegree, 3);
+
+      for (let d = 0, i = 0; d < shDegreeMax; ++ d)
+      {
+         const coefs = this .coefsForDegree (d);
+
+         for (let c = 0; c < coefs; ++ c)
+            gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splatShs [i];
+      }
    }
 
    parseHeader ()
