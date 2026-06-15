@@ -5,6 +5,7 @@ const X3D = window [Symbol .for ("X_ITE.X3D")];
 
 /*
  * Parser
+ * Reference: https://github.com/nianticlabs/spz
  */
 
 class SPZParser extends BaseSPZParser
