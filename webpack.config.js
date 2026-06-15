@@ -14,10 +14,9 @@ module .exports = async () =>
    const targets = [ ];
 
    targets .push ({
-      entry: {
-         [`${entries [0]}`]: `./src/${entries [0]}.js`,
-         [`${entries [1]}`]: `./src/${entries [1]}.js`,
-      },
+      entry: Object .fromEntries (entries .map (entry => [
+         `${entry}`, `./src/${entry}.js`,
+      ])),
       output: {
          path: path .resolve (__dirname, "dist"),
          filename: "[name].js",
