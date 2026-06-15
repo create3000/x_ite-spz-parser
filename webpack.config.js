@@ -5,13 +5,18 @@ const
 
 module .exports = async () =>
 {
-   const entry = "x_ite-spz-parser"; // `src/${entry}.js`;
+   // `src/${entry}.js`;
+   const entries = [
+      "x_ite-spz-parser-123",
+      "x_ite-spz-parser-4",
+   ];
 
    const targets = [ ];
 
    targets .push ({
       entry: {
-         [`${entry}`]: `./src/${entry}.js`,
+         [`${entries [0]}`]: `./src/${entries [0]}.js`,
+         [`${entries [1]}`]: `./src/${entries [1]}.js`,
       },
       output: {
          path: path .resolve (__dirname, "dist"),

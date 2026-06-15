@@ -1,15 +1,10 @@
-import { default as createSpzModule4 } from "./spz-3.0.0/spz.js";
-import { default as createSpzModule123 } from "./spz-2.1.0-adobe.27/spz.js";
-
 const X3D = window [Symbol .for ("X_ITE.X3D")];
 
 /*
- * Parser
+ * Base Parser
  */
 
-// https://github.com/mkkellogg/GaussianSplats3D/blob/main/src/loaders/spz/SpzLoader.js
-
-class SPZParser extends X3D .X3DParser
+class BaseSPZParser extends X3D .X3DParser
 {
    constructor (scene)
    {
@@ -25,23 +20,6 @@ class SPZParser extends X3D .X3DParser
    {
       this .buffer = buffer;
       this .header = this .parseHeader ();
-   }
-
-   isValid ()
-   {
-      const { magic, version } = this .header;
-
-      // Check magic.
-
-      if (magic !== 0x5053474e)
-         return false;
-
-      // Validate header.
-
-      if (version < 1 || version > 4)
-         return false;
-
-      return true;
    }
 
    parseIntoScene (resolve, reject)
@@ -160,35 +138,10 @@ class SPZParser extends X3D .X3DParser
       return header;
    }
 
-   async parseSplats ()
-   {
-      const { version } = this .header;
-
-      switch (version)
-      {
-         case 1:
-         case 2:
-         case 3:
-            return await this .parseSplats123 ();
-         case 4:
-            return await this .parseSplats4 ();
-      }
-   }
-
    async parseSplats4 ()
    {
       const
          SpzModule     = await createSpzModule4 (),
-         data          = new Uint8Array (this .buffer),
-         gaussianCloud = SpzModule .loadSpzFromBuffer (data, { to: SpzModule .CoordinateSystem .RUB });
-
-      return gaussianCloud;
-   }
-
-   async parseSplats123 ()
-   {
-      const
-         SpzModule     = await createSpzModule123 (),
          data          = new Uint8Array (this .buffer),
          gaussianCloud = SpzModule .loadSpzFromBuffer (data, { to: SpzModule .CoordinateSystem .RUB });
 
@@ -206,4 +159,4 @@ class SPZParser extends X3D .X3DParser
    }
 }
 
-X3D .GoldenGate .addParsers (SPZParser);
+export default BaseSPZParser;
