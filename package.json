@@ -1,6 +1,6 @@
 {
   "name": "x_ite-spz-parser",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "3DGS SPZ File Format Parser for X_ITE",
   "main": "dist/x_ite-spz-parser-4.js",
   "module": "dist/x_ite-spz-parser-4.js",
