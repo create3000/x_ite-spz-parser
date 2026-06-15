@@ -58,7 +58,7 @@ class BaseSPZParser extends X3D .X3DParser
       const
          numPoints                 = gaussianCloud .numPoints,
          shs                       = gaussianCloud .sh,
-         shDegree                  =gaussianCloud .shDegree,
+         shDegree                  = gaussianCloud .shDegree,
          shCoefPerChannelPerSplat3 = this .dimForDegree (shDegree) * 3,
          splatShs                  = Array .from ({ length: shDegree }, (_, degree) => Array .from ({ length: this .coefsForDegree (degree) }) .map (() => [ ]));
 
