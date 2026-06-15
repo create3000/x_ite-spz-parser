@@ -115,7 +115,7 @@ class BaseSPZParser extends X3D .X3DParser
       {
          const coefs = this .coefsForDegree (d);
 
-         for (let c = 0; c < coefs; ++ c)
+         for (let c = 0; c < coefs; ++ c, ++ i)
             gaussianSplats [`sphericalHarmonicsDegree${d + 1}Coef${c}`] = splatShs [i];
       }
    }
