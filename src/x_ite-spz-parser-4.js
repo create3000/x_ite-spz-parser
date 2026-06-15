@@ -12,6 +12,9 @@ class SPZParser extends BaseSPZParser
 {
    isValid ()
    {
+      if (!this .header)
+         return false;
+
       const { magic, version } = this .header;
 
       // Check magic.

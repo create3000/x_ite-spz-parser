@@ -124,6 +124,9 @@ class BaseSPZParser extends X3D .X3DParser
 
    parseHeader ()
    {
+      if (this .buffer .byteLength < 16)
+         return;
+
       const dataView = new DataView (this .buffer);
 
       let offset = 0;
