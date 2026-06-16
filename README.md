@@ -24,11 +24,15 @@ Include the script after X_ITE:
 <script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.1.4/dist/x_ite-spz-parser-123.min.js"></script>
 ```
 
-Now you can load 3DGS SPZ files:
+Now you can load 3DGS SPZ files with the `data-src` attribute:
 
 ```html
-<x3d-canvas src="room.spz"></x3d-canvas>
+<x3d-canvas data-src="room.spz"></x3d-canvas>
 ```
+
+Or use `.spz` files as source of an Inline node.
+
+## NPM
 
 You can also install it from npm:
 

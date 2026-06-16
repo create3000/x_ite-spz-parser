@@ -37,8 +37,6 @@ $("#file-input") .on ("change", (event) =>
 
   reader .readAsArrayBuffer (file);
 });
-
-X3D .getBrowser () .loadURL (new X3D .MFString ("./assets/student-room.spz"));
     </script>
     <style>
 :root {
@@ -60,7 +58,7 @@ x3d-canvas {
   </head>
   <body>
 <h1>SPZ File Test Page</h1>
-<x3d-canvas id="x3d-canvas" debug="true"></x3d-canvas>
+<x3d-canvas id="x3d-canvas" debug="true" data-src="assets/student-room.spz"></x3d-canvas>
 <br>
 <button id="view-all">View All</button> <input type="file" id="file-input" accept=".spz">
 
