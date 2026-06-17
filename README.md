@@ -29,7 +29,7 @@ Now you can directly load `.spz` files with the `src` attribute, but you also ha
 You can also use `.spz` files as source of an Inline node.
 
 ```html
-<x3d-canvas data-src="room.spz" extensions="1"></x3d-canvas>
+<x3d-canvas src="room.spz" extensions="1"></x3d-canvas>
 ```
 
 ## NPM
