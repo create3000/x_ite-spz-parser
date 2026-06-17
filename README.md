@@ -13,15 +13,15 @@ Include the script after X_ITE:
 
 ```html
 <script defer src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.1/dist/x_ite-spz-parser-4.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.2/dist/x_ite-spz-parser-4.min.js"></script>
 <!-- or/and for version 1-3 SPZ format -->
-<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.1/dist/x_ite-spz-parser-123.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.2/dist/x_ite-spz-parser-123.min.js"></script>
 
 <!-- or as ES module -->
 <script type="module" src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.mjs"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.1/dist/x_ite-spz-parser-4.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.2/dist/x_ite-spz-parser-4.min.js"></script>
 <!-- or/and for version 1-3 SPZ format -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.1/dist/x_ite-spz-parser-123.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.2.2/dist/x_ite-spz-parser-123.min.js"></script>
 ```
 
 Now you can directly load `.spz` files with the `src` attribute, but you also have to add the `extensions` attribute with a number, how many X_ITE extension you have included. Each extension will decrease this count and when it becomes `0`, the canvas knows that all extensions are loaded and now starts loading the file in the `src` attribute.
