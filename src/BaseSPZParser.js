@@ -1,7 +1,7 @@
 export default X3D =>
 {
    /*
-   * Base Parser
+   * Base SPZ Parser
    */
 
    class BaseSPZParser extends X3D .X3DParser
