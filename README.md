@@ -24,13 +24,13 @@ Include the script after X_ITE:
 <script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.1.5/dist/x_ite-spz-parser-123.min.js"></script>
 ```
 
-Now you can load 3DGS SPZ files with the `data-src` attribute:
+Now you can directly load `.spz` files with the `src` attribute, but you also have to add the `extensions` attribute with a number, how many X_ITE extension you have included. Each extension will decrease this count and when it becomes `0`, the canvas knows that all extensions are loaded and now starts loading the file in the `src` attribute.
+
+You can also use `.spz` files as source of an Inline node.
 
 ```html
 <x3d-canvas data-src="room.spz"></x3d-canvas>
 ```
-
-Or use `.spz` files as source of an Inline node.
 
 ## NPM
 
