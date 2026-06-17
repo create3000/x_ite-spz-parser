@@ -51,5 +51,5 @@ for (const canvas of canvases)
 {
    const { element } = X3D .getBrowser (canvas);
 
-   element .setAttribute ("extensions", (element .getAttribute ("extensions")|0) - 1);
+   element .setAttribute ("extensions", Math .max ((element .getAttribute ("extensions")|0) - 1, 0));
 }
