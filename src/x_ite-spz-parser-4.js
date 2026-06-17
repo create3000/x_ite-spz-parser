@@ -1,55 +1,46 @@
-import { default as createSpzModule } from "./spz-3.0.0/spz.js";
-import BaseSPZParser from "./BaseSPZParser.js";
+import createSpzModule from "./spz-3.0.0/spz.js";
+import BaseSPZParser   from "./BaseSPZParser.js";
+import register        from "../node_modules/x_ite-extension/dist/x_ite-extension.js";
 
-const X3D = window [Symbol .for ("X_ITE.X3D")];
-
-/*
- * Parser
- * Reference: https://github.com/nianticlabs/spz
- */
-
-class SPZParser extends BaseSPZParser
+register (async X3D =>
 {
-   isValid ()
+   /*
+   * Parser
+   * Reference: https://github.com/nianticlabs/spz
+   */
+
+   class SPZParser extends BaseSPZParser (X3D)
    {
-      if (!this .header)
-         return false;
+      isValid ()
+      {
+         if (!this .header)
+            return false;
 
-      const { magic, version } = this .header;
+         const { magic, version } = this .header;
 
-      // Check magic.
+         // Check magic.
 
-      if (magic !== 0x5053474e)
-         return false;
+         if (magic !== 0x5053474e)
+            return false;
 
-      // Validate header.
+         // Validate header.
 
-      if (version < 4 || version > 4)
-         return false;
+         if (version < 4 || version > 4)
+            return false;
 
-      return true;
+         return true;
+      }
+
+      async parseSplats ()
+      {
+         const
+            SpzModule     = await createSpzModule (),
+            data          = new Uint8Array (this .buffer),
+            gaussianCloud = SpzModule .loadSpzFromBuffer (data, { to: SpzModule .CoordinateSystem .RUB });
+
+         return gaussianCloud;
+      }
    }
 
-   async parseSplats ()
-   {
-      const
-         SpzModule     = await createSpzModule (),
-         data          = new Uint8Array (this .buffer),
-         gaussianCloud = SpzModule .loadSpzFromBuffer (data, { to: SpzModule .CoordinateSystem .RUB });
-
-      return gaussianCloud;
-   }
-}
-
-X3D .GoldenGate .addParsers (SPZParser);
-
-// Decrement extensions attribute to show that the parser is loaded.
-
-const canvases = document .querySelectorAll ("x3d-canvas");
-
-for (const canvas of canvases)
-{
-   const { element } = X3D .getBrowser (canvas);
-
-   element .setAttribute ("extensions", Math .max ((element .getAttribute ("extensions")|0) - 1, 0));
-}
+   X3D .GoldenGate .addParsers (SPZParser);
+});
