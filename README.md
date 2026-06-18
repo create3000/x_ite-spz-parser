@@ -2,7 +2,7 @@
 
 [![npm Version](https://img.shields.io/npm/v/x_ite-spz-parser)](https://www.npmjs.com/package/x_ite-spz-parser)
 [![Build Size](https://img.shields.io/bundlephobia/minzip/x_ite-spz-parser)](https://bundlephobia.com/package/x_ite-spz-parser)
-[![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/x_ite-spz-parser/badge?style=rounded)](https://create3000.github.io/jsdelivr-download-stats/?username=create3000&repository=x_ite)
+[![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/x_ite-spz-parser/badge?style=rounded)](https://create3000.github.io/jsdelivr-download-stats/?username=create3000&repository=x_ite-spz-parser)
 [![npm Downloads](https://img.shields.io/npm/dm/x_ite-spz-parser)](https://npmtrends.com/x_ite-spz-parser)
 
 SPZ File Format Parser for [X_ITE](https://create3000.github.io/x_ite/) for 3D Gaussian Splatting
