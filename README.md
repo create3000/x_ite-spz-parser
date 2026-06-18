@@ -12,15 +12,15 @@ SPZ File Format Parser for [X_ITE](https://create3000.github.io/x_ite/) for 3D G
 Include the script before X_ITE:
 
 ```html
-<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.1/dist/x_ite-spz-parser-4.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.2/dist/x_ite-spz-parser-4.min.js"></script>
 <!-- or/and for version 1-3 SPZ format -->
-<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.1/dist/x_ite-spz-parser-123.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.2/dist/x_ite-spz-parser-123.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.js"></script>
 
 <!-- or as ES module -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.1/dist/x_ite-spz-parser-4.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.2/dist/x_ite-spz-parser-4.min.js"></script>
 <!-- or/and for version 1-3 SPZ format -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.1/dist/x_ite-spz-parser-123.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/x_ite-spz-parser@1.3.2/dist/x_ite-spz-parser-123.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/x_ite@VERSION/dist/x_ite.min.mjs"></script>
 ```
 

@@ -7,7 +7,7 @@ import register        from "../node_modules/x_ite-extension/dist/x_ite-extensio
 * Reference: https://github.com/nianticlabs/spz
 */
 
-register (async X3D => class SPZParser extends BaseSPZParser (X3D)
+register (X3D => class SPZParser extends BaseSPZParser (X3D)
 {
    static
    {
