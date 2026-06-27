@@ -35,7 +35,7 @@ export default X3D => class BaseSPZParser extends X3D .X3DParser
 
       scene .setEncoding ("SPZ");
       scene .setProfile (browser .getProfile ("Interchange"));
-      scene .addComponent (browser .getComponent ("X_ITE"));
+      scene .addComponent (browser .getComponent ("GaussianSplats"));
 
       await this .getBrowser () .loadComponents (scene);
 
