@@ -83,6 +83,9 @@ export default X3D => class BaseSPZParser extends X3D .X3DParser
          }
       }
 
+      scene .addNamedNode (scene .getUniqueName ("GaussianSplats"), gaussianSplats);
+      scene .addExportedNode (scene .getUniqueExportName ("GaussianSplats"), gaussianSplats);
+
       return scene;
    }
 
