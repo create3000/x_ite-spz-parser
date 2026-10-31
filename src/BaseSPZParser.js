@@ -9,7 +9,7 @@ export default X3D => class BaseSPZParser extends X3D .X3DParser
       super (scene);
    }
 
-   getEncoding ()
+   static getEncoding ()
    {
       return "ARRAY_BUFFER";
    }
@@ -17,7 +17,7 @@ export default X3D => class BaseSPZParser extends X3D .X3DParser
    setInput (buffer)
    {
       this .buffer = buffer;
-      this .header = this .parseHeader ();
+      this .header = BaseSPZParser .parseHeader (buffer);
    }
 
    parseIntoScene (resolve, reject)
@@ -123,12 +123,12 @@ export default X3D => class BaseSPZParser extends X3D .X3DParser
       }
    }
 
-   parseHeader ()
+   static parseHeader (buffer)
    {
-      if (this .buffer .byteLength < 16)
+      if (buffer .byteLength < 16)
          return;
 
-      const dataView = new DataView (this .buffer);
+      const dataView = new DataView (buffer);
 
       let offset = 0;
 

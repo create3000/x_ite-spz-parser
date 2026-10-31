@@ -14,12 +14,14 @@ register (X3D => class SPZParser extends BaseSPZParser (X3D)
       X3D .GoldenGate .addParsers (this);
    }
 
-   isValid ()
+   static isValid (input)
    {
-      if (!this .header)
+      const header = BaseSPZParser .parseHeader (input);
+
+      if (!header)
          return false;
 
-      const { magic, version } = this .header;
+      const { magic, version } = header;
 
       // Check magic.
 
