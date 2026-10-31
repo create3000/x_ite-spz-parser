@@ -16,7 +16,7 @@ register (X3D => class SPZParser extends BaseSPZParser (X3D)
 
    static isValid (input)
    {
-      const header = BaseSPZParser .parseHeader (input);
+      const header = this .parseHeader (input);
 
       if (!header)
          return false;
